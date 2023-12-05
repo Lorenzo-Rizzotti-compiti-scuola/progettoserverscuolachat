@@ -29,4 +29,10 @@ public class Group {
     public Map<String, ClientHandler> getUser() {
         return Collections.unmodifiableMap(users);
     }
+
+    public void sendMessage(String sender, String message) {
+        for (ClientHandler user : users.values()) {
+            user.sendMessage(sender, this.getName(), message);
+        }
+    }
 }

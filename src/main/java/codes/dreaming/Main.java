@@ -1,7 +1,9 @@
 package codes.dreaming;
 
+import java.io.IOException;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         // I need to create a chat server in java using no online deps where the flow is the following:
         // When a client connect it sends a packet with the state that can be "needsAuth" or "ready"
         // If the state is "needsAuth" the server will wait for a packet with the username, then the server will reply with an error (alreadyInUse) or go to ready
@@ -16,6 +18,16 @@ public class Main {
         // The server will send a packet to all the users in the group when a user sends a message
         // Write a communication package and a server package that implements the server
 
-        System.out.println("Hello world!");
+        System.out.println("1. Server");
+        System.out.println("2. Client");
+        System.out.print("Choose: ");
+        int choice = System.in.read();
+        if (choice == '1') {
+            //codes.dreaming.server.Main.main(args);
+        } else if (choice == '2') {
+            //codes.dreaming.client.Main.main(args);
+        } else {
+            System.out.println("Invalid choice");
+        }
     }
 }

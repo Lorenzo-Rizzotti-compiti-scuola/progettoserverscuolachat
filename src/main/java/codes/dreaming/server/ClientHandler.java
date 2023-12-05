@@ -1,12 +1,12 @@
 package codes.dreaming.server;
 
 import codes.dreaming.comms.ConnectionState;
+import codes.dreaming.comms.client.ClientListRequestPacket;
 import codes.dreaming.comms.client.ClientMessagePacket;
-import codes.dreaming.comms.server.ServerConnectionStateUpdatePacket;
-import codes.dreaming.comms.server.Error;
+import codes.dreaming.comms.server.*;
 import codes.dreaming.comms.client.ClientAuthPacket;
 import codes.dreaming.comms.client.ClientPacket;
-import codes.dreaming.comms.server.ServerErrorPacket;
+import codes.dreaming.comms.server.Error;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -28,6 +28,14 @@ public class ClientHandler implements Runnable {
 
     public String getUsername() {
         return username;
+    }
+
+    public void sendMessage(String sender, String recipient, String message) {
+        try {
+            output.writeObject(new ServerMessagePacket(message, sender, recipient));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -59,7 +67,9 @@ public class ClientHandler implements Runnable {
                 ClientPacket packet = (ClientPacket) input.readObject();
 
                 if (packet instanceof ClientMessagePacket clientMessagePacket) {
-                    //TODO: Handle packet
+                    this.server.sendMessage(this, clientMessagePacket.getRecipient(), clientMessagePacket.getMessage());
+                } else if (packet instanceof ClientListRequestPacket clientListRequestPacket) {
+                    this.output.writeObject(this.server.getListPacket());
                 }
 
             }

@@ -1,6 +1,7 @@
 package codes.dreaming.server;
 
 import codes.dreaming.comms.Values;
+import codes.dreaming.comms.server.ServerListPacket;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -29,6 +30,45 @@ public class ChatServer {
         }
     }
 
+    private Group getOrCreateGroup(String groupName) {
+        Group group = groups.get(groupName);
+        if (group == null) {
+            group = new Group(groupName);
+            groups.put(groupName, group);
+        }
+        return group;
+    }
+
+    public boolean joinGroup(ClientHandler clientHandler, String groupName) {
+        Group group = getOrCreateGroup(groupName);
+        return group.addUser(clientHandler);
+    }
+
+    public boolean leaveGroup(ClientHandler clientHandler, String groupName) {
+        Group group = groups.get(groupName);
+        if (group == null) {
+            return false;
+        }
+        return group.removeUser(clientHandler.getUsername());
+    }
+
+    public void sendMessage(ClientHandler clientHandler, String recipient, String message) {
+        if (recipient.startsWith(Values.GROUP_CHAR)) {
+            Group group = groups.get(recipient);
+            if (group != null) {
+                group.sendMessage(clientHandler.getUsername(), message);
+            }
+        } else if (recipient.startsWith(Values.USER_CHAR)) {
+            ClientHandler recipientHandler = users.get(recipient);
+            if (recipientHandler != null) {
+                recipientHandler.sendMessage(clientHandler.getUsername(), recipient, message);
+            }
+        }
+    }
+
+    public ServerListPacket getListPacket() {
+        return new ServerListPacket(users.keySet().toArray(new String[0]), groups.keySet().toArray(new String[0]));
+    }
 
     /**
      * Adds a new user to the system.
