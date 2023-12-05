@@ -68,7 +68,7 @@ public class ClientHandler implements Runnable {
 
                 if (packet instanceof ClientMessagePacket clientMessagePacket) {
                     this.server.sendMessage(this, clientMessagePacket.getRecipient(), clientMessagePacket.getMessage());
-                } else if (packet instanceof ClientListRequestPacket clientListRequestPacket) {
+                } else if (packet instanceof ClientListRequestPacket) {
                     this.output.writeObject(this.server.getListPacket());
                 }
 
