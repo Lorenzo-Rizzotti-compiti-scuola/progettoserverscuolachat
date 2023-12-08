@@ -40,6 +40,9 @@ public class ChatServer {
     }
 
     public boolean joinGroup(ClientHandler clientHandler, String groupName) {
+        if (!groupName.startsWith(Values.GROUP_CHAR)) {
+            return false;
+        }
         Group group = getOrCreateGroup(groupName);
         return group.addUser(clientHandler);
     }
@@ -56,7 +59,7 @@ public class ChatServer {
         if (recipient.startsWith(Values.GROUP_CHAR)) {
             Group group = groups.get(recipient);
             if (group != null) {
-                group.sendMessage(clientHandler.getUsername(), message);
+                group.sendMessage(clientHandler.getUsername(), message, clientHandler);
             }
         } else if (recipient.startsWith(Values.USER_CHAR)) {
             ClientHandler recipientHandler = users.get(recipient);
@@ -101,13 +104,5 @@ public class ChatServer {
             ClientHandler clientHandler = new ClientHandler(clientSocket, this);
             new Thread(clientHandler).start();
         }
-    }
-
-    // Add methods to manage users, groups, and send packets to them
-
-    public static void main(String[] args) throws IOException {
-        int port = 12345; // Choose your port
-        ChatServer server = new ChatServer(port);
-        server.start();
     }
 }

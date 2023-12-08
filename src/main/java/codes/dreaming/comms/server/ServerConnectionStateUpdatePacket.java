@@ -8,4 +8,8 @@ public class ServerConnectionStateUpdatePacket extends ServerPacket {
     public ServerConnectionStateUpdatePacket(ConnectionState newState) {
         this.newState = newState;
     }
+
+    public ConnectionState getState() {
+        return newState;
+    }
 }
